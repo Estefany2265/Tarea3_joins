@@ -1,0 +1,70 @@
+
+
+SELECT u.university_name ,c.country_name  FROM university u 
+inner join country c on u.country_id = c.id ;
+
+
+SELECT c.country_name , count(u.id) 'Cantidad de Universidades' FROM country c 
+INNER JOIN university u on c.id =u.country_id 
+GROUP BY c.country_name 
+ORDER BY c.country_name ASC
+
+SELECT COUNT(DISTINCT u.country_id) AS cantidad_paises_sin_universidades
+FROM universities.dbo.university AS u
+LEFT JOIN universities.dbo.university_ranking_year AS ury ON u.id = ury.university_id
+WHERE ury.university_id IS NULL;
+
+
+SELECT rs.system_name, rc.criteria_name
+FROM universities.dbo.ranking_system AS rs
+JOIN universities.dbo.ranking_criteria AS rc ON rs.id = rc.ranking_system_id;
+
+SELECT rs.system_name, COUNT(rc.id) AS num_criteria
+FROM universities.dbo.ranking_system AS rs
+JOIN universities.dbo.ranking_criteria AS rc ON rs.id = rc.ranking_system_id
+GROUP BY rs.id, rs.system_name
+ORDER BY num_criteria DESC;
+
+
+SELECT rc.criteria_name, u.university_name, ury.score
+FROM universities.dbo.university_ranking_year AS ury
+JOIN universities.dbo.ranking_criteria AS rc ON ury.ranking_criteria_id = rc.id
+JOIN universities.dbo.university AS u ON ury.university_id = u.id
+WHERE ury.year = 2012
+ORDER BY rc.criteria_name, ury.score DESC;
+
+
+SELECT TOP 5 u.university_name, ury.score
+FROM universities.dbo.university_ranking_year AS ury
+JOIN universities.dbo.university AS u ON ury.university_id = u.id
+JOIN universities.dbo.ranking_criteria AS rc ON ury.ranking_criteria_id = rc.id
+JOIN universities.dbo.ranking_system AS rs ON rc.ranking_system_id = rs.id
+WHERE rs.system_name = 'Center for World University Rankings' AND ury.score = 100
+ORDER BY ury.score DESC;
+
+
+SELECT c.country_name
+FROM universities.dbo.university_ranking_year AS ury
+JOIN universities.dbo.university AS u ON ury.university_id = u.id
+JOIN universities.dbo.country AS c ON u.country_id = c.id
+WHERE ury.score > 90
+GROUP BY c.country_name;
+
+
+SELECT u.university_name
+FROM universities.dbo.university_ranking_year AS ury
+JOIN universities.dbo.ranking_criteria AS rc ON ury.ranking_criteria_id = rc.id
+JOIN universities.dbo.ranking_system AS rs ON rc.ranking_system_id = rs.id
+JOIN universities.dbo.university AS u ON ury.university_id = u.id
+WHERE rs.system_name = 'Shanghai Ranking'
+GROUP BY u.university_name;
+
+
+SELECT TOP 10 u.university_name, ury.score
+FROM universities.dbo.university_ranking_year AS ury
+JOIN universities.dbo.ranking_criteria AS rc ON ury.ranking_criteria_id = rc.id
+JOIN universities.dbo.ranking_system AS rs ON rc.ranking_system_id = rs.id
+JOIN universities.dbo.university AS u ON ury.university_id = u.id
+WHERE rs.system_name = 'Times Higher Education World University Ranking'
+      AND ury.year = 2012
+ORDER BY ury.score ASC;
